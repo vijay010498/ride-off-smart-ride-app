@@ -4,3 +4,6 @@
 [submodule "ride-off-smart-ride-app-auth-service"]
 	path = ride-off-smart-ride-app-auth-service
 	url = https://github.com/vijay010498/ride-off-smart-ride-app-auth-service.git
+[submodule "ride-off-smart-ride-app-admin-react"]
+	path = ride-off-smart-ride-app-admin-react
+	url = https://github.com/vijay010498/ride-off-smart-ride-app-admin-react.git
