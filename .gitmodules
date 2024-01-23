@@ -7,3 +7,6 @@
 [submodule "ride-off-smart-ride-app-admin-react"]
 	path = ride-off-smart-ride-app-admin-react
 	url = https://github.com/vijay010498/ride-off-smart-ride-app-admin-react.git
+[submodule "ride-off-smart-ride-app-flutter"]
+	path = ride-off-smart-ride-app-flutter
+	url = https://github.com/vijay010498/ride-off-smart-ride-app-flutter.git
