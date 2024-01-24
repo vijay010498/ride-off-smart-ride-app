@@ -32,9 +32,6 @@ services:
     build: ./ride-off-smart-ride-app-auth-service
     depends_on:
       - mongodb_auth_service
-    #    deploy:
-    #      mode: replicated
-    #      replicas: 2
     ports:
       - "3000:3000"
 
@@ -70,9 +67,6 @@ services:
     build: ./ride-off-smart-ride-app-verification-service
     depends_on:
       - mongodb_verification_service
-    #    deploy:
-    #      mode: replicated
-    #      replicas: 2
     ports:
       - "3001:3000"
 
