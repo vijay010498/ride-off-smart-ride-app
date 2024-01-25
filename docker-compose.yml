@@ -2,12 +2,12 @@ version: '3'
 
 services:
   mongodb_auth_service:
+    container_name: mongodb_auth_service
     image: mongo:latest
     restart: always
     environment:
       - MONGO_INITDB_ROOT_USERNAME=authService
       - MONGO_INITDB_ROOT_PASSWORD=authService
-      - MONGO_INITDB_DATABASE=authService_db
     ports:
       - "27017:27017"
     volumes:
@@ -20,7 +20,6 @@ services:
       - ME_CONFIG_MONGODB_URL=mongodb://authService:authService@mongodb_auth_service:27017
       - ME_CONFIG_BASICAUTH_USERNAME=admin  #mongo-express web username
       - ME_CONFIG_BASICAUTH_PASSWORD=admin  #mongo-express web password
-      - ME_CONFIG_MONGODB_AUTH_DATABASE=authService_db
       - ME_CONFIG_MONGODB_AUTH_USERNAME=authService
       - ME_CONFIG_MONGODB_AUTH_PASSWORD=authService
     depends_on:
@@ -29,6 +28,7 @@ services:
       - "8081:8081"
 
   auth-service:
+    container_name: auth-service
     build: ./ride-off-smart-ride-app-auth-service
     depends_on:
       - mongodb_auth_service
@@ -37,12 +37,12 @@ services:
 
 
   mongodb_verification_service:
+    container_name: mongodb_verification_service
     image: mongo:latest
     restart: always
     environment:
       - MONGO_INITDB_ROOT_USERNAME=verificationService
       - MONGO_INITDB_ROOT_PASSWORD=verificationService
-      - MONGO_INITDB_DATABASE=verificationService_db
     ports:
       - "27018:27017" # 27018 = host port, 27017 = container port
     volumes:
@@ -55,7 +55,6 @@ services:
       - ME_CONFIG_MONGODB_URL=mongodb://verificationService:verificationService@mongodb_verification_service:27017
       - ME_CONFIG_BASICAUTH_USERNAME=admin  #mongo-express web username
       - ME_CONFIG_BASICAUTH_PASSWORD=admin  #mongo-express web password
-      - ME_CONFIG_MONGODB_AUTH_DATABASE=verificationService_db
       - ME_CONFIG_MONGODB_AUTH_USERNAME=verificationService
       - ME_CONFIG_MONGODB_AUTH_PASSWORD=verificationService
     depends_on:
@@ -64,6 +63,7 @@ services:
       - "8082:8081"
 
   verification-service:
+    container_name: verification-service
     build: ./ride-off-smart-ride-app-verification-service
     depends_on:
       - mongodb_verification_service
