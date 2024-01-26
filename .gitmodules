@@ -10,3 +10,6 @@
 [submodule "ride-off-smart-ride-app-verification-service"]
 	path = ride-off-smart-ride-app-verification-service
 	url = https://github.com/vijay010498/ride-off-smart-ride-app-verification-service.git
+[submodule "ride-off-smart-ride-app-flutter"]
+	path = ride-off-smart-ride-app-flutter
+	url = https://github.com/vijay010498/ride-off-smart-ride-app-flutter.git
