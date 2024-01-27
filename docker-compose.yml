@@ -33,7 +33,7 @@ services:
     depends_on:
       - mongodb_auth_service
     ports:
-      - "3002:3002"
+      - "3000:3000"
 
 
   mongodb_verification_service:
