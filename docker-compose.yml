@@ -1,6 +1,7 @@
 version: '3'
 
 services:
+### Auth Service
   mongodb_auth_service:
     container_name: mongodb_auth_service
     image: mongo:latest
@@ -9,7 +10,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=authService
       - MONGO_INITDB_ROOT_PASSWORD=authService
     ports:
-      - "27017:27017"
+      - "27017"
     volumes:
       - mongodb-authService-data:/data/db
 
@@ -36,7 +37,7 @@ services:
       - "3000:3000"
       - "8000:8000"  # For nestjs dev tools
 
-
+### Verification Service
   mongodb_verification_service:
     container_name: mongodb_verification_service
     image: mongo:latest
@@ -45,7 +46,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=verificationService
       - MONGO_INITDB_ROOT_PASSWORD=verificationService
     ports:
-      - "27018:27017" # 27018 = host port, 27017 = container port
+      - "27017"
     volumes:
       - mongodb-verificationService-data:/data/db
 
@@ -61,7 +62,7 @@ services:
     depends_on:
       - mongodb_verification_service
     ports:
-      - "8082:8081"
+      - "8082:8081"# 8082 = host port, 8081 = container port
 
   verification-service:
     container_name: verification-service
@@ -72,9 +73,50 @@ services:
       - "3001:3000"
       - "8001:8000"  # For nestjs dev tools
 
+### Admin Service
+  mongodb_admin_service:
+    container_name: mongodb_admin_service
+    image: mongo:latest
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=adminService
+      - MONGO_INITDB_ROOT_PASSWORD=adminService
+    ports:
+      - "27017"
+    volumes:
+      - mongodb-adminService-data:/data/db
+
+
+  mongo-express-admin:
+    container_name: mongo-express-admin
+    image: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb://adminService:adminService@mongodb_admin_service:27017
+      - ME_CONFIG_BASICAUTH_USERNAME=admin  #mongo-express web username
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin  #mongo-express web password
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=adminService
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=adminService
+    depends_on:
+      - mongodb_admin_service
+    ports:
+      - "8083:8081"
+
+  admin-service:
+    container_name: admin-service
+    build: ./ride-off-smart-ride-app-admin-service
+    depends_on:
+      - mongodb_admin_service
+    ports:
+      - "3002:3000"
+      - "8002:8000"  # For nestjs dev tools
+
+
 volumes:
   mongodb-authService-data:
     driver: local
 
   mongodb-verificationService-data:
+    driver: local
+
+  mongodb-adminService-data:
     driver: local
