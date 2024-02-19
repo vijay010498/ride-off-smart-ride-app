@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-### Auth Service
+  ### Auth Service
   mongodb_auth_service:
     container_name: mongodb_auth_service
     image: mongo:latest
@@ -37,7 +37,7 @@ services:
       - "3000:3000"
       - "8000:8000"  # For nestjs dev tools
 
-### Verification Service
+  ### Verification Service
   mongodb_verification_service:
     container_name: mongodb_verification_service
     image: mongo:latest
@@ -73,7 +73,7 @@ services:
       - "3001:3000"
       - "8001:8000"  # For nestjs dev tools
 
-### Admin Service
+  ### Admin Service
   mongodb_admin_service:
     container_name: mongodb_admin_service
     image: mongo:latest
@@ -110,7 +110,7 @@ services:
       - "3002:3000"
       - "8002:8000"  # For nestjs dev tools
 
-### Ride Service
+  ### Ride Service
   mongodb_ride_service:
     container_name: mongodb_ride_service
     image: mongo:latest
@@ -145,6 +145,19 @@ services:
     ports:
       - "3003:3000"
       - "8003:8000"  # For nestjs dev tools
+
+
+  ### Reverse Proxy - Nginx
+  nginx:
+    container_name: nginx
+    build: ./ride-off-smart-ride-app-nginx-reverse-proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - verification-service
+      - admin-service
+      - ride-service
 
 
 volumes:
