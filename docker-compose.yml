@@ -9,8 +9,6 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=authService
       - MONGO_INITDB_ROOT_PASSWORD=authService
-    ports:
-      - "27017"
     volumes:
       - mongodb-authService-data:/data/db
 
@@ -29,13 +27,12 @@ services:
       - "8081:8081"
 
   auth-service:
-    container_name: auth-service
     build: ./ride-off-smart-ride-app-auth-service
     depends_on:
       - mongodb_auth_service
-    ports:
-      - "3000:3000"
-      - "8000:8000"  # For nestjs dev tools
+    deploy:
+      mode: replicated
+      replicas: 1
 
   ### Verification Service
   mongodb_verification_service:
@@ -45,8 +42,6 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=verificationService
       - MONGO_INITDB_ROOT_PASSWORD=verificationService
-    ports:
-      - "27017"
     volumes:
       - mongodb-verificationService-data:/data/db
 
@@ -65,13 +60,14 @@ services:
       - "8082:8081"# 8082 = host port, 8081 = container port
 
   verification-service:
-    container_name: verification-service
     build: ./ride-off-smart-ride-app-verification-service
     depends_on:
       - mongodb_verification_service
-    ports:
-      - "3001:3000"
-      - "8001:8000"  # For nestjs dev tools
+    deploy:
+      mode: replicated
+      replicas: 1
+#    ports: TODO expose if dev tools are needed
+#      - "8001:8000"  # For nestjs dev tools
 
   ### Admin Service
   mongodb_admin_service:
@@ -81,8 +77,6 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=adminService
       - MONGO_INITDB_ROOT_PASSWORD=adminService
-    ports:
-      - "27017"
     volumes:
       - mongodb-adminService-data:/data/db
 
@@ -102,13 +96,12 @@ services:
       - "8083:8081"
 
   admin-service:
-    container_name: admin-service
     build: ./ride-off-smart-ride-app-admin-service
     depends_on:
       - mongodb_admin_service
-    ports:
-      - "3002:3000"
-      - "8002:8000"  # For nestjs dev tools
+    deploy:
+      mode: replicated
+      replicas: 1
 
   ### Ride Service
   mongodb_ride_service:
@@ -118,8 +111,6 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=rideService
       - MONGO_INITDB_ROOT_PASSWORD=rideService
-    ports:
-      - "27017"
     volumes:
       - mongodb-rideService-data:/data/db
 
@@ -138,14 +129,12 @@ services:
       - "8084:8081"
 
   ride-service:
-    container_name: ride-service
     build: ./ride-off-smart-ride-app-ride-service
     depends_on:
       - mongodb_ride_service
-    ports:
-      - "3003:3000"
-      - "8003:8000"  # For nestjs dev tools
-
+    deploy:
+      mode: replicated
+      replicas: 1
 
   ### Reverse Proxy - Nginx
   nginx:
