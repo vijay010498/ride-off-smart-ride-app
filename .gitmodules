@@ -22,3 +22,6 @@
 [submodule "ride-off-smart-ride-app-nginx-reverse-proxy"]
 	path = ride-off-smart-ride-app-nginx-reverse-proxy
 	url = https://github.com/vijay010498/ride-off-smart-ride-app-nginx-reverse-proxy.git
+[submodule "ride-off-smart-ride-app-match-service"]
+	path = ride-off-smart-ride-app-match-service
+	url = https://github.com/vijay010498/ride-off-smart-ride-app-match-service.git
