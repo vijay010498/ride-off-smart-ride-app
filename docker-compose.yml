@@ -66,8 +66,8 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-#    ports: TODO expose if dev tools are needed
-#      - "8001:8000"  # For nestjs dev tools
+  #    ports: TODO expose if dev tools are needed
+  #      - "8001:8000"  # For nestjs dev tools
 
   ### Admin Service
   mongodb_admin_service:
@@ -136,6 +136,40 @@ services:
       mode: replicated
       replicas: 1
 
+
+  ### Ride Match Service
+  mongodb_ride_match_service:
+    container_name: mongodb_ride_match_service
+    image: mongo:latest
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rideMatchService
+      - MONGO_INITDB_ROOT_PASSWORD=rideMatchService
+    volumes:
+      - mongodb-rideMatchService-data:/data/db
+
+  mongo-express-ride-match:
+    container_name: mongo-express-ride-match
+    image: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb://rideMatchService:rideMatchService@mongodb_ride_match_service:27017
+      - ME_CONFIG_BASICAUTH_USERNAME=admin  #mongo-express web username
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin  #mongo-express web password
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=rideMatchService
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=rideMatchService
+    depends_on:
+      - mongodb_ride_match_service
+    ports:
+      - "8085:8081"
+
+  ride-match-service:
+    build: ./ride-off-smart-ride-app-match-service
+    depends_on:
+      - mongodb_ride_match_service
+    deploy:
+      mode: replicated
+      replicas: 1
+
   ### Reverse Proxy - Nginx
   nginx:
     container_name: nginx
@@ -147,6 +181,7 @@ services:
       - verification-service
       - admin-service
       - ride-service
+      - ride-match-service
 
 
 volumes:
@@ -160,4 +195,7 @@ volumes:
     driver: local
 
   mongodb-rideService-data:
+    driver: local
+
+  mongodb-rideMatchService-data:
     driver: local
