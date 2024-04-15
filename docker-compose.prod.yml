@@ -114,7 +114,9 @@ services:
   ### Reverse Proxy - Nginx
   nginx:
     container_name: nginx
-    build: ./ride-off-smart-ride-app-nginx-reverse-proxy
+    build:
+      context: ./ride-off-smart-ride-app-nginx-reverse-proxy
+      dockerfile: Dockerfile-prod
     ports:
       - "80:80"
     depends_on:
