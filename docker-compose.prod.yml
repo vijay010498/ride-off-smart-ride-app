@@ -1,0 +1,142 @@
+version: '3'
+
+services:
+  ### Auth Service
+  mongodb_auth_service:
+    container_name: mongodb_auth_service
+    image: mongo:latest
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=authService
+      - MONGO_INITDB_ROOT_PASSWORD=authService
+    volumes:
+      - mongodb-authService-data:/data/db
+
+  auth-service:
+    build:
+      context: ./ride-off-smart-ride-app-auth-service
+      dockerfile: Dockerfile-prod
+    depends_on:
+      - mongodb_auth_service
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  ### Verification Service
+  mongodb_verification_service:
+    container_name: mongodb_verification_service
+    image: mongo:latest
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=verificationService
+      - MONGO_INITDB_ROOT_PASSWORD=verificationService
+    volumes:
+      - mongodb-verificationService-data:/data/db
+
+
+  verification-service:
+    build:
+      context: ./ride-off-smart-ride-app-verification-service
+      dockerfile: Dockerfile-prod
+    depends_on:
+      - mongodb_verification_service
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  ### Admin Service
+  mongodb_admin_service:
+    container_name: mongodb_admin_service
+    image: mongo:latest
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=adminService
+      - MONGO_INITDB_ROOT_PASSWORD=adminService
+    volumes:
+      - mongodb-adminService-data:/data/db
+
+
+  admin-service:
+    build:
+      context: ./ride-off-smart-ride-app-admin-service
+      dockerfile: Dockerfile-prod
+    depends_on:
+      - mongodb_admin_service
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  ### Ride Service
+  mongodb_ride_service:
+    container_name: mongodb_ride_service
+    image: mongo:latest
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rideService
+      - MONGO_INITDB_ROOT_PASSWORD=rideService
+    volumes:
+      - mongodb-rideService-data:/data/db
+
+
+  ride-service:
+    build:
+      context: ./ride-off-smart-ride-app-ride-service
+      dockerfile: Dockerfile-prod
+    depends_on:
+      - mongodb_ride_service
+    deploy:
+      mode: replicated
+      replicas: 1
+
+
+  ### Ride Match Service
+  mongodb_ride_match_service:
+    container_name: mongodb_ride_match_service
+    image: mongo:latest
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rideMatchService
+      - MONGO_INITDB_ROOT_PASSWORD=rideMatchService
+    volumes:
+      - mongodb-rideMatchService-data:/data/db
+
+
+  ride-match-service:
+    build:
+      context: ./ride-off-smart-ride-app-match-service
+      dockerfile: Dockerfile-prod
+    depends_on:
+      - mongodb_ride_match_service
+    deploy:
+      mode: replicated
+      replicas: 2
+
+  ### Reverse Proxy - Nginx
+  nginx:
+    container_name: nginx
+    build: ./ride-off-smart-ride-app-nginx-reverse-proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - verification-service
+      - admin-service
+      - ride-service
+      - ride-match-service
+
+
+volumes:
+  mongodb-authService-data:
+    driver: local
+
+  mongodb-verificationService-data:
+    driver: local
+
+  mongodb-adminService-data:
+    driver: local
+
+  mongodb-rideService-data:
+    driver: local
+
+  mongodb-rideMatchService-data:
+    driver: local
