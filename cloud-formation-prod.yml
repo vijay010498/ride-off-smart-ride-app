@@ -76,7 +76,7 @@ Resources:
               ContainerName: Adminservice_ResolvConf_InitContainer
           Essential: true
           Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_admin_service:latest@sha256:e30971f1febd90b7a16a8b95b0687d3108c99df2ceaea5feeebb3974ccd65bad
-          LinuxParameters: {}
+          LinuxParameters: { }
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -101,7 +101,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -191,7 +191,7 @@ Resources:
               ContainerName: Authservice_ResolvConf_InitContainer
           Essential: true
           Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_auth_service:latest@sha256:da587ef1dad31a465ac749cce3ffff509a97a2dc6a77c47ee6d4106f55a11218
-          LinuxParameters: {}
+          LinuxParameters: { }
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -216,7 +216,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -405,7 +405,7 @@ Resources:
               Value: adminService
           Essential: true
           Image: docker.io/library/mongo:latest@sha256:42c8c713073c4382e03f9fa713f9b79d601383e412cd1eba30c55fe70c2ddacd
-          LinuxParameters: {}
+          LinuxParameters: { }
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -444,7 +444,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -464,7 +464,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -481,7 +481,7 @@ Resources:
                     elasticfilesystem:AccessPointArn:
                       Ref: MongodbadminServicedataAccessPoint
                 Effect: Allow
-                Principal: {}
+                Principal: { }
                 Resource:
                   - arn:aws:elasticfilesystem:ca-central-1:414388150256:file-system/fs-058d35d3194de50a2
             Version: 2012-10-17
@@ -607,7 +607,7 @@ Resources:
               Value: authService
           Essential: true
           Image: docker.io/library/mongo:latest@sha256:42c8c713073c4382e03f9fa713f9b79d601383e412cd1eba30c55fe70c2ddacd
-          LinuxParameters: {}
+          LinuxParameters: { }
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -646,7 +646,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -666,7 +666,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -683,7 +683,7 @@ Resources:
                     elasticfilesystem:AccessPointArn:
                       Ref: MongodbauthServicedataAccessPoint
                 Effect: Allow
-                Principal: {}
+                Principal: { }
                 Resource:
                   - arn:aws:elasticfilesystem:ca-central-1:414388150256:file-system/fs-07dad22af39ab5427
             Version: 2012-10-17
@@ -842,7 +842,7 @@ Resources:
               Value: rideMatchService
           Essential: true
           Image: docker.io/library/mongo:latest@sha256:42c8c713073c4382e03f9fa713f9b79d601383e412cd1eba30c55fe70c2ddacd
-          LinuxParameters: {}
+          LinuxParameters: { }
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -881,7 +881,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -901,7 +901,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -918,7 +918,7 @@ Resources:
                     elasticfilesystem:AccessPointArn:
                       Ref: MongodbrideMatchServicedataAccessPoint
                 Effect: Allow
-                Principal: {}
+                Principal: { }
                 Resource:
                   - arn:aws:elasticfilesystem:ca-central-1:414388150256:file-system/fs-0d971ec0cfc5986d0
             Version: 2012-10-17
@@ -1012,7 +1012,7 @@ Resources:
               Value: rideService
           Essential: true
           Image: docker.io/library/mongo:latest@sha256:42c8c713073c4382e03f9fa713f9b79d601383e412cd1eba30c55fe70c2ddacd
-          LinuxParameters: {}
+          LinuxParameters: { }
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -1051,7 +1051,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -1071,7 +1071,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -1088,7 +1088,7 @@ Resources:
                     elasticfilesystem:AccessPointArn:
                       Ref: MongodbrideServicedataAccessPoint
                 Effect: Allow
-                Principal: {}
+                Principal: { }
                 Resource:
                   - arn:aws:elasticfilesystem:ca-central-1:414388150256:file-system/fs-0b6f44bb0c7f34066
             Version: 2012-10-17
@@ -1215,7 +1215,7 @@ Resources:
               Value: verificationService
           Essential: true
           Image: docker.io/library/mongo:latest@sha256:42c8c713073c4382e03f9fa713f9b79d601383e412cd1eba30c55fe70c2ddacd
-          LinuxParameters: {}
+          LinuxParameters: { }
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -1254,7 +1254,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -1274,7 +1274,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -1291,7 +1291,7 @@ Resources:
                     elasticfilesystem:AccessPointArn:
                       Ref: MongodbverificationServicedataAccessPoint
                 Effect: Allow
-                Principal: {}
+                Principal: { }
                 Resource:
                   - arn:aws:elasticfilesystem:ca-central-1:414388150256:file-system/fs-0f12ecc22d3df1ed1
             Version: 2012-10-17
@@ -1305,11 +1305,11 @@ Resources:
   NginxService:
     DependsOn:
       - NginxTCP80Listener
-      - AdminserviceService
-      - RideserviceService
       - RidematchserviceService
       - AuthserviceService
       - VerificationserviceService
+      - AdminserviceService
+      - RideserviceService
     Properties:
       Cluster:
         Fn::GetAtt:
@@ -1411,7 +1411,7 @@ Resources:
               ContainerName: Nginx_ResolvConf_InitContainer
           Essential: true
           Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_nginx_reverse_proxy:latest@sha256:0aeacdfc86149d2d2d896f41d6f47d7e5f52a7cbc99d2943b82d2a575c4acf3e
-          LinuxParameters: {}
+          LinuxParameters: { }
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -1440,7 +1440,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -1530,7 +1530,7 @@ Resources:
               ContainerName: Ridematchservice_ResolvConf_InitContainer
           Essential: true
           Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_ride_match_service:latest@sha256:31bd4e911bd43c9de3fe51df7a58e84d5a310cc32cf7926559885bc06b1dc1a4
-          LinuxParameters: {}
+          LinuxParameters: { }
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -1555,7 +1555,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -1645,7 +1645,7 @@ Resources:
               ContainerName: Rideservice_ResolvConf_InitContainer
           Essential: true
           Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_ride_service:latest@sha256:595acf7d8f2b67824999b559f4e54a850a35575629ec08e7185a36954ac4f579
-          LinuxParameters: {}
+          LinuxParameters: { }
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -1670,7 +1670,7 @@ Resources:
         Statement:
           - Action:
               - sts:AssumeRole
-            Condition: {}
+            Condition: { }
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
@@ -1760,7 +1760,7 @@ Resources:
               ContainerName: Verificationservice_ResolvConf_InitContainer
           Essential: true
           Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_verification_service:latest@sha256:92a79378d935f1f88a88610cf54ed4c27bd6f13b4c8bb476f5b18188da88d342
-          LinuxParameters: {}
+          LinuxParameters: { }
           LogConfiguration:
             LogDriver: awslogs
             Options:
