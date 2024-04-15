@@ -13,9 +13,7 @@ services:
       - mongodb-authService-data:/data/db
 
   auth-service:
-    build:
-      context: ./ride-off-smart-ride-app-auth-service
-      dockerfile: Dockerfile-prod
+    image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_auth_service:latest
     depends_on:
       - mongodb_auth_service
     deploy:
@@ -35,9 +33,7 @@ services:
 
 
   verification-service:
-    build:
-      context: ./ride-off-smart-ride-app-verification-service
-      dockerfile: Dockerfile-prod
+    image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_verification_service:latest
     depends_on:
       - mongodb_verification_service
     deploy:
@@ -55,16 +51,14 @@ services:
     volumes:
       - mongodb-adminService-data:/data/db
 
-
   admin-service:
-    build:
-      context: ./ride-off-smart-ride-app-admin-service
-      dockerfile: Dockerfile-prod
+    image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_admin_service:latest
     depends_on:
       - mongodb_admin_service
     deploy:
       mode: replicated
       replicas: 1
+
 
   ### Ride Service
   mongodb_ride_service:
@@ -79,9 +73,7 @@ services:
 
 
   ride-service:
-    build:
-      context: ./ride-off-smart-ride-app-ride-service
-      dockerfile: Dockerfile-prod
+    image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_ride_service:latest
     depends_on:
       - mongodb_ride_service
     deploy:
@@ -102,9 +94,7 @@ services:
 
 
   ride-match-service:
-    build:
-      context: ./ride-off-smart-ride-app-match-service
-      dockerfile: Dockerfile-prod
+    image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_ride_match_service:latest
     depends_on:
       - mongodb_ride_match_service
     deploy:
@@ -114,9 +104,7 @@ services:
   ### Reverse Proxy - Nginx
   nginx:
     container_name: nginx
-    build:
-      context: ./ride-off-smart-ride-app-nginx-reverse-proxy
-      dockerfile: Dockerfile-prod
+    image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_nginx_reverse_proxy:latest
     ports:
       - "80:80"
     depends_on:

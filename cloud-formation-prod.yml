@@ -1,0 +1,1801 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  AdminserviceService:
+    DependsOn:
+      - MongodbadminserviceService
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+          - Cluster
+          - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - Ref: DefaultNetwork
+          Subnets:
+            - subnet-0a893740eeda6add9
+            - subnet-0d704c3a019216ac0
+            - subnet-05a0224aec02da528
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - AdminserviceServiceDiscoveryEntry
+              - Arn
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: admin-service
+      TaskDefinition:
+        Ref: AdminserviceTaskDefinition
+    Type: AWS::ECS::Service
+  AdminserviceServiceDiscoveryEntry:
+    Properties:
+      Description: '"admin-service" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: admin-service
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  AdminserviceTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+        - Command:
+            - ca-central-1.compute.internal
+            - ride-off-smart-ride-app.local
+          Essential: false
+          Image: docker/ecs-searchdomain-sidecar:1.0
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: Adminservice_ResolvConf_InitContainer
+        - DependsOn:
+            - Condition: SUCCESS
+              ContainerName: Adminservice_ResolvConf_InitContainer
+          Essential: true
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_admin_service:latest
+          LinuxParameters: { }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: admin-service
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: AdminserviceTaskExecutionRole
+      Family: ride-off-smart-ride-app-admin-service
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  AdminserviceTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: admin-service
+    Type: AWS::IAM::Role
+  AuthserviceService:
+    DependsOn:
+      - MongodbauthserviceService
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+          - Cluster
+          - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - Ref: DefaultNetwork
+          Subnets:
+            - subnet-0a893740eeda6add9
+            - subnet-0d704c3a019216ac0
+            - subnet-05a0224aec02da528
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - AuthserviceServiceDiscoveryEntry
+              - Arn
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: auth-service
+      TaskDefinition:
+        Ref: AuthserviceTaskDefinition
+    Type: AWS::ECS::Service
+  AuthserviceServiceDiscoveryEntry:
+    Properties:
+      Description: '"auth-service" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: auth-service
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  AuthserviceTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+        - Command:
+            - ca-central-1.compute.internal
+            - ride-off-smart-ride-app.local
+          Essential: false
+          Image: docker/ecs-searchdomain-sidecar:1.0
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: Authservice_ResolvConf_InitContainer
+        - DependsOn:
+            - Condition: SUCCESS
+              ContainerName: Authservice_ResolvConf_InitContainer
+          Essential: true
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_auth_service:latest
+          LinuxParameters: { }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: auth-service
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: AuthserviceTaskExecutionRole
+      Family: ride-off-smart-ride-app-auth-service
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  AuthserviceTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: auth-service
+    Type: AWS::IAM::Role
+  CloudMap:
+    Properties:
+      Description: Service Map for Docker Compose project ride-off-smart-ride-app
+      Name: ride-off-smart-ride-app.local
+      Vpc: vpc-0f8064d7b5b38e0ba
+    Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+  Cluster:
+    Properties:
+      ClusterName: ride-off-smart-ride-app
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+    Type: AWS::ECS::Cluster
+  Default80Ingress:
+    Properties:
+      CidrIp: 0.0.0.0/0
+      Description: nginx:80/tcp on default network
+      FromPort: 80
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: TCP
+      ToPort: 80
+    Type: AWS::EC2::SecurityGroupIngress
+  DefaultNetwork:
+    Properties:
+      GroupDescription: ride-off-smart-ride-app Security Group for default network
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.network
+          Value: ride-off-smart-ride-app_default
+      VpcId: vpc-0f8064d7b5b38e0ba
+    Type: AWS::EC2::SecurityGroup
+  DefaultNetworkIngress:
+    Properties:
+      Description: Allow communication within network default
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: "-1"
+      SourceSecurityGroupId:
+        Ref: DefaultNetwork
+    Type: AWS::EC2::SecurityGroupIngress
+  LoadBalancer:
+    Properties:
+      Scheme: internet-facing
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      Subnets:
+        - subnet-0a893740eeda6add9
+        - subnet-0d704c3a019216ac0
+        - subnet-05a0224aec02da528
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+      Type: application
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+  LogGroup:
+    Properties:
+      LogGroupName: /docker-compose/ride-off-smart-ride-app
+    Type: AWS::Logs::LogGroup
+  MongodbadminServicedataAccessPoint:
+    Properties:
+      AccessPointTags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.volume
+          Value: mongodb-adminService-data
+        - Key: Name
+          Value: ride-off-smart-ride-app_mongodb-adminService-data
+      FileSystemId: fs-058d35d3194de50a2
+    Type: AWS::EFS::AccessPoint
+  MongodbadminServicedataNFSMountTargetOnSubnet05a0224aec02da528:
+    Properties:
+      FileSystemId: fs-058d35d3194de50a2
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-05a0224aec02da528
+    Type: AWS::EFS::MountTarget
+  MongodbadminServicedataNFSMountTargetOnSubnet0a893740eeda6add9:
+    Properties:
+      FileSystemId: fs-058d35d3194de50a2
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-0a893740eeda6add9
+    Type: AWS::EFS::MountTarget
+  MongodbadminServicedataNFSMountTargetOnSubnet0d704c3a019216ac0:
+    Properties:
+      FileSystemId: fs-058d35d3194de50a2
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-0d704c3a019216ac0
+    Type: AWS::EFS::MountTarget
+  MongodbadminserviceService:
+    DependsOn:
+      - MongodbadminServicedataNFSMountTargetOnSubnet0a893740eeda6add9
+      - MongodbadminServicedataNFSMountTargetOnSubnet0d704c3a019216ac0
+      - MongodbadminServicedataNFSMountTargetOnSubnet05a0224aec02da528
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+          - Cluster
+          - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - Ref: DefaultNetwork
+          Subnets:
+            - subnet-0a893740eeda6add9
+            - subnet-0d704c3a019216ac0
+            - subnet-05a0224aec02da528
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - MongodbadminserviceServiceDiscoveryEntry
+              - Arn
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_admin_service
+      TaskDefinition:
+        Ref: MongodbadminserviceTaskDefinition
+    Type: AWS::ECS::Service
+  MongodbadminserviceServiceDiscoveryEntry:
+    Properties:
+      Description: '"mongodb_admin_service" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: mongodb_admin_service
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  MongodbadminserviceTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+        - Command:
+            - ca-central-1.compute.internal
+            - ride-off-smart-ride-app.local
+          Essential: false
+          Image: docker/ecs-searchdomain-sidecar:1.0
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: Mongodbadminservice_ResolvConf_InitContainer
+        - DependsOn:
+            - Condition: SUCCESS
+              ContainerName: Mongodbadminservice_ResolvConf_InitContainer
+          Environment:
+            - Name: MONGO_INITDB_ROOT_PASSWORD
+              Value: adminService
+            - Name: MONGO_INITDB_ROOT_USERNAME
+              Value: adminService
+          Essential: true
+          Image: docker.io/library/mongo:latest
+          LinuxParameters: { }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          MountPoints:
+            - ContainerPath: /data/db
+              SourceVolume: mongodb-adminService-data
+          Name: mongodb_admin_service
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: MongodbadminserviceTaskExecutionRole
+      Family: ride-off-smart-ride-app-mongodb_admin_service
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Ref: MongodbadminserviceTaskRole
+      Volumes:
+        - EFSVolumeConfiguration:
+            AuthorizationConfig:
+              AccessPointId:
+                Ref: MongodbadminServicedataAccessPoint
+              IAM: ENABLED
+            FilesystemId: fs-058d35d3194de50a2
+            TransitEncryption: ENABLED
+          Name: mongodb-adminService-data
+    Type: AWS::ECS::TaskDefinition
+  MongodbadminserviceTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_admin_service
+    Type: AWS::IAM::Role
+  MongodbadminserviceTaskRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - elasticfilesystem:ClientMount
+                  - elasticfilesystem:ClientWrite
+                  - elasticfilesystem:ClientRootAccess
+                Condition:
+                  StringEquals:
+                    elasticfilesystem:AccessPointArn:
+                      Ref: MongodbadminServicedataAccessPoint
+                Effect: Allow
+                Principal: { }
+                Resource:
+                  - arn:aws:elasticfilesystem:ca-central-1:414388150256:file-system/fs-058d35d3194de50a2
+            Version: 2012-10-17
+          PolicyName: MongodbadminserviceMongodbadminServicedataVolumeMountPolicy
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_admin_service
+    Type: AWS::IAM::Role
+  MongodbauthServicedataAccessPoint:
+    Properties:
+      AccessPointTags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.volume
+          Value: mongodb-authService-data
+        - Key: Name
+          Value: ride-off-smart-ride-app_mongodb-authService-data
+      FileSystemId: fs-07dad22af39ab5427
+    Type: AWS::EFS::AccessPoint
+  MongodbauthServicedataNFSMountTargetOnSubnet05a0224aec02da528:
+    Properties:
+      FileSystemId: fs-07dad22af39ab5427
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-05a0224aec02da528
+    Type: AWS::EFS::MountTarget
+  MongodbauthServicedataNFSMountTargetOnSubnet0a893740eeda6add9:
+    Properties:
+      FileSystemId: fs-07dad22af39ab5427
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-0a893740eeda6add9
+    Type: AWS::EFS::MountTarget
+  MongodbauthServicedataNFSMountTargetOnSubnet0d704c3a019216ac0:
+    Properties:
+      FileSystemId: fs-07dad22af39ab5427
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-0d704c3a019216ac0
+    Type: AWS::EFS::MountTarget
+  MongodbauthserviceService:
+    DependsOn:
+      - MongodbauthServicedataNFSMountTargetOnSubnet0a893740eeda6add9
+      - MongodbauthServicedataNFSMountTargetOnSubnet0d704c3a019216ac0
+      - MongodbauthServicedataNFSMountTargetOnSubnet05a0224aec02da528
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+          - Cluster
+          - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - Ref: DefaultNetwork
+          Subnets:
+            - subnet-0a893740eeda6add9
+            - subnet-0d704c3a019216ac0
+            - subnet-05a0224aec02da528
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - MongodbauthserviceServiceDiscoveryEntry
+              - Arn
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_auth_service
+      TaskDefinition:
+        Ref: MongodbauthserviceTaskDefinition
+    Type: AWS::ECS::Service
+  MongodbauthserviceServiceDiscoveryEntry:
+    Properties:
+      Description: '"mongodb_auth_service" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: mongodb_auth_service
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  MongodbauthserviceTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+        - Command:
+            - ca-central-1.compute.internal
+            - ride-off-smart-ride-app.local
+          Essential: false
+          Image: docker/ecs-searchdomain-sidecar:1.0
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: Mongodbauthservice_ResolvConf_InitContainer
+        - DependsOn:
+            - Condition: SUCCESS
+              ContainerName: Mongodbauthservice_ResolvConf_InitContainer
+          Environment:
+            - Name: MONGO_INITDB_ROOT_PASSWORD
+              Value: authService
+            - Name: MONGO_INITDB_ROOT_USERNAME
+              Value: authService
+          Essential: true
+          Image: docker.io/library/mongo:latest
+          LinuxParameters: { }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          MountPoints:
+            - ContainerPath: /data/db
+              SourceVolume: mongodb-authService-data
+          Name: mongodb_auth_service
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: MongodbauthserviceTaskExecutionRole
+      Family: ride-off-smart-ride-app-mongodb_auth_service
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Ref: MongodbauthserviceTaskRole
+      Volumes:
+        - EFSVolumeConfiguration:
+            AuthorizationConfig:
+              AccessPointId:
+                Ref: MongodbauthServicedataAccessPoint
+              IAM: ENABLED
+            FilesystemId: fs-07dad22af39ab5427
+            TransitEncryption: ENABLED
+          Name: mongodb-authService-data
+    Type: AWS::ECS::TaskDefinition
+  MongodbauthserviceTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_auth_service
+    Type: AWS::IAM::Role
+  MongodbauthserviceTaskRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - elasticfilesystem:ClientMount
+                  - elasticfilesystem:ClientWrite
+                  - elasticfilesystem:ClientRootAccess
+                Condition:
+                  StringEquals:
+                    elasticfilesystem:AccessPointArn:
+                      Ref: MongodbauthServicedataAccessPoint
+                Effect: Allow
+                Principal: { }
+                Resource:
+                  - arn:aws:elasticfilesystem:ca-central-1:414388150256:file-system/fs-07dad22af39ab5427
+            Version: 2012-10-17
+          PolicyName: MongodbauthserviceMongodbauthServicedataVolumeMountPolicy
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_auth_service
+    Type: AWS::IAM::Role
+  MongodbrideMatchServicedataAccessPoint:
+    Properties:
+      AccessPointTags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.volume
+          Value: mongodb-rideMatchService-data
+        - Key: Name
+          Value: ride-off-smart-ride-app_mongodb-rideMatchService-data
+      FileSystemId: fs-0d971ec0cfc5986d0
+    Type: AWS::EFS::AccessPoint
+  MongodbrideMatchServicedataNFSMountTargetOnSubnet05a0224aec02da528:
+    Properties:
+      FileSystemId: fs-0d971ec0cfc5986d0
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-05a0224aec02da528
+    Type: AWS::EFS::MountTarget
+  MongodbrideMatchServicedataNFSMountTargetOnSubnet0a893740eeda6add9:
+    Properties:
+      FileSystemId: fs-0d971ec0cfc5986d0
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-0a893740eeda6add9
+    Type: AWS::EFS::MountTarget
+  MongodbrideMatchServicedataNFSMountTargetOnSubnet0d704c3a019216ac0:
+    Properties:
+      FileSystemId: fs-0d971ec0cfc5986d0
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-0d704c3a019216ac0
+    Type: AWS::EFS::MountTarget
+  MongodbrideServicedataAccessPoint:
+    Properties:
+      AccessPointTags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.volume
+          Value: mongodb-rideService-data
+        - Key: Name
+          Value: ride-off-smart-ride-app_mongodb-rideService-data
+      FileSystemId: fs-0b6f44bb0c7f34066
+    Type: AWS::EFS::AccessPoint
+  MongodbrideServicedataNFSMountTargetOnSubnet05a0224aec02da528:
+    Properties:
+      FileSystemId: fs-0b6f44bb0c7f34066
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-05a0224aec02da528
+    Type: AWS::EFS::MountTarget
+  MongodbrideServicedataNFSMountTargetOnSubnet0a893740eeda6add9:
+    Properties:
+      FileSystemId: fs-0b6f44bb0c7f34066
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-0a893740eeda6add9
+    Type: AWS::EFS::MountTarget
+  MongodbrideServicedataNFSMountTargetOnSubnet0d704c3a019216ac0:
+    Properties:
+      FileSystemId: fs-0b6f44bb0c7f34066
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-0d704c3a019216ac0
+    Type: AWS::EFS::MountTarget
+  MongodbridematchserviceService:
+    DependsOn:
+      - MongodbrideMatchServicedataNFSMountTargetOnSubnet0a893740eeda6add9
+      - MongodbrideMatchServicedataNFSMountTargetOnSubnet0d704c3a019216ac0
+      - MongodbrideMatchServicedataNFSMountTargetOnSubnet05a0224aec02da528
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+          - Cluster
+          - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - Ref: DefaultNetwork
+          Subnets:
+            - subnet-0a893740eeda6add9
+            - subnet-0d704c3a019216ac0
+            - subnet-05a0224aec02da528
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - MongodbridematchserviceServiceDiscoveryEntry
+              - Arn
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_ride_match_service
+      TaskDefinition:
+        Ref: MongodbridematchserviceTaskDefinition
+    Type: AWS::ECS::Service
+  MongodbridematchserviceServiceDiscoveryEntry:
+    Properties:
+      Description: '"mongodb_ride_match_service" service discovery entry in Cloud
+        Map'
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: mongodb_ride_match_service
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  MongodbridematchserviceTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+        - Command:
+            - ca-central-1.compute.internal
+            - ride-off-smart-ride-app.local
+          Essential: false
+          Image: docker/ecs-searchdomain-sidecar:1.0
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: Mongodbridematchservice_ResolvConf_InitContainer
+        - DependsOn:
+            - Condition: SUCCESS
+              ContainerName: Mongodbridematchservice_ResolvConf_InitContainer
+          Environment:
+            - Name: MONGO_INITDB_ROOT_PASSWORD
+              Value: rideMatchService
+            - Name: MONGO_INITDB_ROOT_USERNAME
+              Value: rideMatchService
+          Essential: true
+          Image: docker.io/library/mongo:latest
+          LinuxParameters: { }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          MountPoints:
+            - ContainerPath: /data/db
+              SourceVolume: mongodb-rideMatchService-data
+          Name: mongodb_ride_match_service
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: MongodbridematchserviceTaskExecutionRole
+      Family: ride-off-smart-ride-app-mongodb_ride_match_service
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Ref: MongodbridematchserviceTaskRole
+      Volumes:
+        - EFSVolumeConfiguration:
+            AuthorizationConfig:
+              AccessPointId:
+                Ref: MongodbrideMatchServicedataAccessPoint
+              IAM: ENABLED
+            FilesystemId: fs-0d971ec0cfc5986d0
+            TransitEncryption: ENABLED
+          Name: mongodb-rideMatchService-data
+    Type: AWS::ECS::TaskDefinition
+  MongodbridematchserviceTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_ride_match_service
+    Type: AWS::IAM::Role
+  MongodbridematchserviceTaskRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - elasticfilesystem:ClientMount
+                  - elasticfilesystem:ClientWrite
+                  - elasticfilesystem:ClientRootAccess
+                Condition:
+                  StringEquals:
+                    elasticfilesystem:AccessPointArn:
+                      Ref: MongodbrideMatchServicedataAccessPoint
+                Effect: Allow
+                Principal: { }
+                Resource:
+                  - arn:aws:elasticfilesystem:ca-central-1:414388150256:file-system/fs-0d971ec0cfc5986d0
+            Version: 2012-10-17
+          PolicyName: MongodbridematchserviceMongodbrideMatchServicedataVolumeMountPolicy
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_ride_match_service
+    Type: AWS::IAM::Role
+  MongodbrideserviceService:
+    DependsOn:
+      - MongodbrideServicedataNFSMountTargetOnSubnet0a893740eeda6add9
+      - MongodbrideServicedataNFSMountTargetOnSubnet0d704c3a019216ac0
+      - MongodbrideServicedataNFSMountTargetOnSubnet05a0224aec02da528
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+          - Cluster
+          - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - Ref: DefaultNetwork
+          Subnets:
+            - subnet-0a893740eeda6add9
+            - subnet-0d704c3a019216ac0
+            - subnet-05a0224aec02da528
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - MongodbrideserviceServiceDiscoveryEntry
+              - Arn
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_ride_service
+      TaskDefinition:
+        Ref: MongodbrideserviceTaskDefinition
+    Type: AWS::ECS::Service
+  MongodbrideserviceServiceDiscoveryEntry:
+    Properties:
+      Description: '"mongodb_ride_service" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: mongodb_ride_service
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  MongodbrideserviceTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+        - Command:
+            - ca-central-1.compute.internal
+            - ride-off-smart-ride-app.local
+          Essential: false
+          Image: docker/ecs-searchdomain-sidecar:1.0
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: Mongodbrideservice_ResolvConf_InitContainer
+        - DependsOn:
+            - Condition: SUCCESS
+              ContainerName: Mongodbrideservice_ResolvConf_InitContainer
+          Environment:
+            - Name: MONGO_INITDB_ROOT_PASSWORD
+              Value: rideService
+            - Name: MONGO_INITDB_ROOT_USERNAME
+              Value: rideService
+          Essential: true
+          Image: docker.io/library/mongo:latest
+          LinuxParameters: { }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          MountPoints:
+            - ContainerPath: /data/db
+              SourceVolume: mongodb-rideService-data
+          Name: mongodb_ride_service
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: MongodbrideserviceTaskExecutionRole
+      Family: ride-off-smart-ride-app-mongodb_ride_service
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Ref: MongodbrideserviceTaskRole
+      Volumes:
+        - EFSVolumeConfiguration:
+            AuthorizationConfig:
+              AccessPointId:
+                Ref: MongodbrideServicedataAccessPoint
+              IAM: ENABLED
+            FilesystemId: fs-0b6f44bb0c7f34066
+            TransitEncryption: ENABLED
+          Name: mongodb-rideService-data
+    Type: AWS::ECS::TaskDefinition
+  MongodbrideserviceTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_ride_service
+    Type: AWS::IAM::Role
+  MongodbrideserviceTaskRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - elasticfilesystem:ClientMount
+                  - elasticfilesystem:ClientWrite
+                  - elasticfilesystem:ClientRootAccess
+                Condition:
+                  StringEquals:
+                    elasticfilesystem:AccessPointArn:
+                      Ref: MongodbrideServicedataAccessPoint
+                Effect: Allow
+                Principal: { }
+                Resource:
+                  - arn:aws:elasticfilesystem:ca-central-1:414388150256:file-system/fs-0b6f44bb0c7f34066
+            Version: 2012-10-17
+          PolicyName: MongodbrideserviceMongodbrideServicedataVolumeMountPolicy
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_ride_service
+    Type: AWS::IAM::Role
+  MongodbverificationServicedataAccessPoint:
+    Properties:
+      AccessPointTags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.volume
+          Value: mongodb-verificationService-data
+        - Key: Name
+          Value: ride-off-smart-ride-app_mongodb-verificationService-data
+      FileSystemId: fs-0f12ecc22d3df1ed1
+    Type: AWS::EFS::AccessPoint
+  MongodbverificationServicedataNFSMountTargetOnSubnet05a0224aec02da528:
+    Properties:
+      FileSystemId: fs-0f12ecc22d3df1ed1
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-05a0224aec02da528
+    Type: AWS::EFS::MountTarget
+  MongodbverificationServicedataNFSMountTargetOnSubnet0a893740eeda6add9:
+    Properties:
+      FileSystemId: fs-0f12ecc22d3df1ed1
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-0a893740eeda6add9
+    Type: AWS::EFS::MountTarget
+  MongodbverificationServicedataNFSMountTargetOnSubnet0d704c3a019216ac0:
+    Properties:
+      FileSystemId: fs-0f12ecc22d3df1ed1
+      SecurityGroups:
+        - Ref: DefaultNetwork
+      SubnetId: subnet-0d704c3a019216ac0
+    Type: AWS::EFS::MountTarget
+  MongodbverificationserviceService:
+    DependsOn:
+      - MongodbverificationServicedataNFSMountTargetOnSubnet0a893740eeda6add9
+      - MongodbverificationServicedataNFSMountTargetOnSubnet0d704c3a019216ac0
+      - MongodbverificationServicedataNFSMountTargetOnSubnet05a0224aec02da528
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+          - Cluster
+          - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - Ref: DefaultNetwork
+          Subnets:
+            - subnet-0a893740eeda6add9
+            - subnet-0d704c3a019216ac0
+            - subnet-05a0224aec02da528
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - MongodbverificationserviceServiceDiscoveryEntry
+              - Arn
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_verification_service
+      TaskDefinition:
+        Ref: MongodbverificationserviceTaskDefinition
+    Type: AWS::ECS::Service
+  MongodbverificationserviceServiceDiscoveryEntry:
+    Properties:
+      Description: '"mongodb_verification_service" service discovery entry in Cloud
+        Map'
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: mongodb_verification_service
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  MongodbverificationserviceTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+        - Command:
+            - ca-central-1.compute.internal
+            - ride-off-smart-ride-app.local
+          Essential: false
+          Image: docker/ecs-searchdomain-sidecar:1.0
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: Mongodbverificationservice_ResolvConf_InitContainer
+        - DependsOn:
+            - Condition: SUCCESS
+              ContainerName: Mongodbverificationservice_ResolvConf_InitContainer
+          Environment:
+            - Name: MONGO_INITDB_ROOT_PASSWORD
+              Value: verificationService
+            - Name: MONGO_INITDB_ROOT_USERNAME
+              Value: verificationService
+          Essential: true
+          Image: docker.io/library/mongo:latest
+          LinuxParameters: { }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          MountPoints:
+            - ContainerPath: /data/db
+              SourceVolume: mongodb-verificationService-data
+          Name: mongodb_verification_service
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: MongodbverificationserviceTaskExecutionRole
+      Family: ride-off-smart-ride-app-mongodb_verification_service
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Ref: MongodbverificationserviceTaskRole
+      Volumes:
+        - EFSVolumeConfiguration:
+            AuthorizationConfig:
+              AccessPointId:
+                Ref: MongodbverificationServicedataAccessPoint
+              IAM: ENABLED
+            FilesystemId: fs-0f12ecc22d3df1ed1
+            TransitEncryption: ENABLED
+          Name: mongodb-verificationService-data
+    Type: AWS::ECS::TaskDefinition
+  MongodbverificationserviceTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_verification_service
+    Type: AWS::IAM::Role
+  MongodbverificationserviceTaskRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - elasticfilesystem:ClientMount
+                  - elasticfilesystem:ClientWrite
+                  - elasticfilesystem:ClientRootAccess
+                Condition:
+                  StringEquals:
+                    elasticfilesystem:AccessPointArn:
+                      Ref: MongodbverificationServicedataAccessPoint
+                Effect: Allow
+                Principal: { }
+                Resource:
+                  - arn:aws:elasticfilesystem:ca-central-1:414388150256:file-system/fs-0f12ecc22d3df1ed1
+            Version: 2012-10-17
+          PolicyName: MongodbverificationserviceMongodbverificationServicedataVolumeMountPolicy
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: mongodb_verification_service
+    Type: AWS::IAM::Role
+  NginxService:
+    DependsOn:
+      - NginxTCP80Listener
+      - RideserviceService
+      - RidematchserviceService
+      - AuthserviceService
+      - VerificationserviceService
+      - AdminserviceService
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+          - Cluster
+          - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      LoadBalancers:
+        - ContainerName: nginx
+          ContainerPort: 80
+          TargetGroupArn:
+            Ref: NginxTCP80TargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - Ref: DefaultNetwork
+          Subnets:
+            - subnet-0a893740eeda6add9
+            - subnet-0d704c3a019216ac0
+            - subnet-05a0224aec02da528
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - NginxServiceDiscoveryEntry
+              - Arn
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: nginx
+      TaskDefinition:
+        Ref: NginxTaskDefinition
+    Type: AWS::ECS::Service
+  NginxServiceDiscoveryEntry:
+    Properties:
+      Description: '"nginx" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: nginx
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  NginxTCP80Listener:
+    Properties:
+      DefaultActions:
+        - ForwardConfig:
+            TargetGroups:
+              - TargetGroupArn:
+                  Ref: NginxTCP80TargetGroup
+          Type: forward
+      LoadBalancerArn:
+        Ref: LoadBalancer
+      Port: 80
+      Protocol: HTTP
+    Type: AWS::ElasticLoadBalancingV2::Listener
+  NginxTCP80TargetGroup:
+    Properties:
+      Port: 80
+      Protocol: HTTP
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+      TargetType: ip
+      VpcId: vpc-0f8064d7b5b38e0ba
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  NginxTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+        - Command:
+            - ca-central-1.compute.internal
+            - ride-off-smart-ride-app.local
+          Essential: false
+          Image: docker/ecs-searchdomain-sidecar:1.0
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: Nginx_ResolvConf_InitContainer
+        - DependsOn:
+            - Condition: SUCCESS
+              ContainerName: Nginx_ResolvConf_InitContainer
+          Essential: true
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_nginx_reverse_proxy:latest
+          LinuxParameters: { }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: nginx
+          PortMappings:
+            - ContainerPort: 80
+              HostPort: 80
+              Protocol: tcp
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: NginxTaskExecutionRole
+      Family: ride-off-smart-ride-app-nginx
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  NginxTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: nginx
+    Type: AWS::IAM::Role
+  RidematchserviceService:
+    DependsOn:
+      - MongodbridematchserviceService
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+          - Cluster
+          - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - Ref: DefaultNetwork
+          Subnets:
+            - subnet-0a893740eeda6add9
+            - subnet-0d704c3a019216ac0
+            - subnet-05a0224aec02da528
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - RidematchserviceServiceDiscoveryEntry
+              - Arn
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: ride-match-service
+      TaskDefinition:
+        Ref: RidematchserviceTaskDefinition
+    Type: AWS::ECS::Service
+  RidematchserviceServiceDiscoveryEntry:
+    Properties:
+      Description: '"ride-match-service" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: ride-match-service
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  RidematchserviceTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+        - Command:
+            - ca-central-1.compute.internal
+            - ride-off-smart-ride-app.local
+          Essential: false
+          Image: docker/ecs-searchdomain-sidecar:1.0
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: Ridematchservice_ResolvConf_InitContainer
+        - DependsOn:
+            - Condition: SUCCESS
+              ContainerName: Ridematchservice_ResolvConf_InitContainer
+          Essential: true
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_ride_match_service:latest
+          LinuxParameters: { }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: ride-match-service
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: RidematchserviceTaskExecutionRole
+      Family: ride-off-smart-ride-app-ride-match-service
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  RidematchserviceTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: ride-match-service
+    Type: AWS::IAM::Role
+  RideserviceService:
+    DependsOn:
+      - MongodbrideserviceService
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+          - Cluster
+          - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - Ref: DefaultNetwork
+          Subnets:
+            - subnet-0a893740eeda6add9
+            - subnet-0d704c3a019216ac0
+            - subnet-05a0224aec02da528
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - RideserviceServiceDiscoveryEntry
+              - Arn
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: ride-service
+      TaskDefinition:
+        Ref: RideserviceTaskDefinition
+    Type: AWS::ECS::Service
+  RideserviceServiceDiscoveryEntry:
+    Properties:
+      Description: '"ride-service" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: ride-service
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  RideserviceTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+        - Command:
+            - ca-central-1.compute.internal
+            - ride-off-smart-ride-app.local
+          Essential: false
+          Image: docker/ecs-searchdomain-sidecar:1.0
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: Rideservice_ResolvConf_InitContainer
+        - DependsOn:
+            - Condition: SUCCESS
+              ContainerName: Rideservice_ResolvConf_InitContainer
+          Essential: true
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_ride_service:latest
+          LinuxParameters: { }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: ride-service
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: RideserviceTaskExecutionRole
+      Family: ride-off-smart-ride-app-ride-service
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  RideserviceTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: ride-service
+    Type: AWS::IAM::Role
+  VerificationserviceService:
+    DependsOn:
+      - MongodbverificationserviceService
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+          - Cluster
+          - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - Ref: DefaultNetwork
+          Subnets:
+            - subnet-0a893740eeda6add9
+            - subnet-0d704c3a019216ac0
+            - subnet-05a0224aec02da528
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - VerificationserviceServiceDiscoveryEntry
+              - Arn
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: verification-service
+      TaskDefinition:
+        Ref: VerificationserviceTaskDefinition
+    Type: AWS::ECS::Service
+  VerificationserviceServiceDiscoveryEntry:
+    Properties:
+      Description: '"verification-service" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: verification-service
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  VerificationserviceTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+        - Command:
+            - ca-central-1.compute.internal
+            - ride-off-smart-ride-app.local
+          Essential: false
+          Image: docker/ecs-searchdomain-sidecar:1.0
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: Verificationservice_ResolvConf_InitContainer
+        - DependsOn:
+            - Condition: SUCCESS
+              ContainerName: Verificationservice_ResolvConf_InitContainer
+          Essential: true
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_verification_service:latest
+          LinuxParameters: { }
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: LogGroup
+              awslogs-region:
+                Ref: AWS::Region
+              awslogs-stream-prefix: ride-off-smart-ride-app
+          Name: verification-service
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: VerificationserviceTaskExecutionRole
+      Family: ride-off-smart-ride-app-verification-service
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  VerificationserviceTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Condition: { }
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key: com.docker.compose.project
+          Value: ride-off-smart-ride-app
+        - Key: com.docker.compose.service
+          Value: verification-service
+    Type: AWS::IAM::Role
