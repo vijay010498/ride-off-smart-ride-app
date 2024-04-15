@@ -1410,7 +1410,7 @@ Resources:
             - Condition: SUCCESS
               ContainerName: Nginx_ResolvConf_InitContainer
           Essential: true
-          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_nginx_reverse_proxy:latest@sha256:de27a57887df2bc4c307d505802a625180669741508ba9d5770554b358138903
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_nginx_reverse_proxy:latest@sha256:a02004eec4aa255af04fe0b9ac46e9d3d9646f52e93f6af1de3daeb6524544c9
           LinuxParameters: {}
           LogConfiguration:
             LogDriver: awslogs
