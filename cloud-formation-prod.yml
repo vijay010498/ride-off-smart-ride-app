@@ -1305,11 +1305,11 @@ Resources:
   NginxService:
     DependsOn:
       - NginxTCP80Listener
-      - AuthserviceService
-      - VerificationserviceService
       - AdminserviceService
       - RideserviceService
       - RidematchserviceService
+      - AuthserviceService
+      - VerificationserviceService
     Properties:
       Cluster:
         Fn::GetAtt:
@@ -1410,7 +1410,7 @@ Resources:
             - Condition: SUCCESS
               ContainerName: Nginx_ResolvConf_InitContainer
           Essential: true
-          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_nginx_reverse_proxy:latest@sha256:95640e3c979218ac703967e8ad295344033a855b47a339481e4ef416814945b3
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_nginx_reverse_proxy:latest@sha256:4cf63ca553d9266c8791f4e5a0be0153a8c89f36a0b28379a045f30c66e4bf03
           LinuxParameters: {}
           LogConfiguration:
             LogDriver: awslogs
