@@ -75,7 +75,7 @@ Resources:
             - Condition: SUCCESS
               ContainerName: Adminservice_ResolvConf_InitContainer
           Essential: true
-          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_admin_service:latest@sha256:69a80bec17c0da57796c2bcd9373d1c09cea8043520c570c778bfd0d2c3edad7
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_admin_service:latest@sha256:114b615b24b243be58b6a686bb102bbe7dc4f03b4cf3aa66faa0ea8940a247ed
           LinuxParameters: {}
           LogConfiguration:
             LogDriver: awslogs
@@ -1305,11 +1305,11 @@ Resources:
   NginxService:
     DependsOn:
       - NginxTCP80Listener
-      - AdminserviceService
-      - RideserviceService
       - RidematchserviceService
       - AuthserviceService
       - VerificationserviceService
+      - AdminserviceService
+      - RideserviceService
     Properties:
       Cluster:
         Fn::GetAtt:
@@ -1410,7 +1410,7 @@ Resources:
             - Condition: SUCCESS
               ContainerName: Nginx_ResolvConf_InitContainer
           Essential: true
-          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_nginx_reverse_proxy:latest@sha256:4cf63ca553d9266c8791f4e5a0be0153a8c89f36a0b28379a045f30c66e4bf03
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_nginx_reverse_proxy:latest@sha256:9f8513da7ce0179ab03ba83f434d1cb48cc6f9b8b5dbe669204ebfd9304808b3
           LinuxParameters: {}
           LogConfiguration:
             LogDriver: awslogs
