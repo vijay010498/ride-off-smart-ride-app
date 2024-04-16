@@ -75,7 +75,7 @@ Resources:
             - Condition: SUCCESS
               ContainerName: Adminservice_ResolvConf_InitContainer
           Essential: true
-          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_admin_service:latest@sha256:e30971f1febd90b7a16a8b95b0687d3108c99df2ceaea5feeebb3974ccd65bad
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_admin_service:latest@sha256:69a80bec17c0da57796c2bcd9373d1c09cea8043520c570c778bfd0d2c3edad7
           LinuxParameters: {}
           LogConfiguration:
             LogDriver: awslogs
@@ -1305,11 +1305,11 @@ Resources:
   NginxService:
     DependsOn:
       - NginxTCP80Listener
+      - RidematchserviceService
       - AuthserviceService
       - VerificationserviceService
       - AdminserviceService
       - RideserviceService
-      - RidematchserviceService
     Properties:
       Cluster:
         Fn::GetAtt:
