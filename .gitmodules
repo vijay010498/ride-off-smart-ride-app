@@ -25,3 +25,6 @@
 [submodule "ride-off-smart-ride-app-match-service"]
 	path = ride-off-smart-ride-app-match-service
 	url = https://github.com/vijay010498/ride-off-smart-ride-app-match-service.git
+[submodule "ride-off-smart-ride-app-location-service"]
+	path = ride-off-smart-ride-app-location-service
+	url = https://github.com/vijay010498/ride-off-smart-ride-app-location-service.git
