@@ -404,7 +404,7 @@ Resources:
             - Name: MONGO_INITDB_ROOT_USERNAME
               Value: adminService
           Essential: true
-          Image: docker.io/library/mongo:latest@sha256:42c8c713073c4382e03f9fa713f9b79d601383e412cd1eba30c55fe70c2ddacd
+          Image: docker.io/library/mongo:latest@sha256:54f906f0ed3092d65237ff01d22023f43ad60a6872be98234aca24abcbabac14
           LinuxParameters: {}
           LogConfiguration:
             LogDriver: awslogs
@@ -606,7 +606,7 @@ Resources:
             - Name: MONGO_INITDB_ROOT_USERNAME
               Value: authService
           Essential: true
-          Image: docker.io/library/mongo:latest@sha256:42c8c713073c4382e03f9fa713f9b79d601383e412cd1eba30c55fe70c2ddacd
+          Image: docker.io/library/mongo:latest@sha256:54f906f0ed3092d65237ff01d22023f43ad60a6872be98234aca24abcbabac14
           LinuxParameters: {}
           LogConfiguration:
             LogDriver: awslogs
@@ -841,7 +841,7 @@ Resources:
             - Name: MONGO_INITDB_ROOT_USERNAME
               Value: rideMatchService
           Essential: true
-          Image: docker.io/library/mongo:latest@sha256:42c8c713073c4382e03f9fa713f9b79d601383e412cd1eba30c55fe70c2ddacd
+          Image: docker.io/library/mongo:latest@sha256:54f906f0ed3092d65237ff01d22023f43ad60a6872be98234aca24abcbabac14
           LinuxParameters: {}
           LogConfiguration:
             LogDriver: awslogs
@@ -1011,7 +1011,7 @@ Resources:
             - Name: MONGO_INITDB_ROOT_USERNAME
               Value: rideService
           Essential: true
-          Image: docker.io/library/mongo:latest@sha256:42c8c713073c4382e03f9fa713f9b79d601383e412cd1eba30c55fe70c2ddacd
+          Image: docker.io/library/mongo:latest@sha256:54f906f0ed3092d65237ff01d22023f43ad60a6872be98234aca24abcbabac14
           LinuxParameters: {}
           LogConfiguration:
             LogDriver: awslogs
@@ -1214,7 +1214,7 @@ Resources:
             - Name: MONGO_INITDB_ROOT_USERNAME
               Value: verificationService
           Essential: true
-          Image: docker.io/library/mongo:latest@sha256:42c8c713073c4382e03f9fa713f9b79d601383e412cd1eba30c55fe70c2ddacd
+          Image: docker.io/library/mongo:latest@sha256:54f906f0ed3092d65237ff01d22023f43ad60a6872be98234aca24abcbabac14
           LinuxParameters: {}
           LogConfiguration:
             LogDriver: awslogs
@@ -1410,7 +1410,7 @@ Resources:
             - Condition: SUCCESS
               ContainerName: Nginx_ResolvConf_InitContainer
           Essential: true
-          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_nginx_reverse_proxy:latest@sha256:9f8513da7ce0179ab03ba83f434d1cb48cc6f9b8b5dbe669204ebfd9304808b3
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_nginx_reverse_proxy:latest@sha256:c2f06553a51e77499d082f778da668c34a22b592f846df258eeb40a2b7dd952c
           LinuxParameters: {}
           LogConfiguration:
             LogDriver: awslogs
@@ -1529,7 +1529,7 @@ Resources:
             - Condition: SUCCESS
               ContainerName: Ridematchservice_ResolvConf_InitContainer
           Essential: true
-          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_ride_match_service:latest@sha256:31bd4e911bd43c9de3fe51df7a58e84d5a310cc32cf7926559885bc06b1dc1a4
+          Image: 414388150256.dkr.ecr.ca-central-1.amazonaws.com/ride_off_ride_match_service:latest@sha256:3464bc1858d9de0f82634c3bfbee037f06f39b961fbe4a17cbb85b449a20bb95
           LinuxParameters: {}
           LogConfiguration:
             LogDriver: awslogs
